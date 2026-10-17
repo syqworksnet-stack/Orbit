@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Orbit Planner</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f3f4ff;--panel:#ffffffa8;--ink:#12142b;--mute:#62678c;--line:#1e245a1f;--acc:#5b5cff;--acc2:#14c39a;--g1:#c7ccff;--g2:#bff2e3;--hi:#ff5d73;--mid:#ffb02e;--lo:#18c29c;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#080a17;--panel:#ffffff0f;--ink:#f0f1ff;--mute:#9a9fc8;--line:#ffffff1a;--acc:#8b8cff;--g1:#2b2f9a66;--g2:#0b6b5a55}}
+:root[data-theme="dark"]{--bg:#080a17;--panel:#ffffff0f;--ink:#f0f1ff;--mute:#9a9fc8;--line:#ffffff1a;--acc:#8b8cff;--g1:#2b2f9a66;--g2:#0b6b5a55}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100vh;background:radial-gradient(60rem 40rem at 95% -10%,var(--g1),transparent 60%),radial-gradient(50rem 36rem at -10% 30%,var(--g2),transparent 60%),var(--bg);background-attachment:fixed;color:var(--ink);font:400 16px/1.5 "Instrument Sans",system-ui,sans-serif}
+h1,h2,h3,.disp{font-family:"Bricolage Grotesque","Instrument Sans",system-ui,sans-serif;margin:0;letter-spacing:-.02em}
+h2{font-size:20px;margin:22px 0 10px}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.app{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
+nav{padding:28px 18px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:6px;position:sticky;top:0;height:100vh}
+.logo{font-weight:800;font-size:22px;margin:0 10px 22px;display:flex;align-items:center;gap:10px}
+.logo i{width:22px;height:22px;border-radius:50%;border:4px solid var(--acc);box-shadow:8px -6px 0 -2px var(--acc2)}
+nav button.tab{background:none;border:0;text-align:left;padding:11px 14px;border-radius:12px;font-weight:500;color:var(--mute)}
+nav button.tab[aria-selected="true"]{background:var(--panel);color:var(--ink);box-shadow:inset 3px 0 0 var(--acc)}
+.sp{flex:1}
+.theme{background:none;border:1px solid var(--line);border-radius:12px;padding:9px 14px;color:var(--mute)}
+#saved{color:var(--mute);font-size:13px;margin:8px 4px 0}
+main{padding:34px clamp(18px,4vw,48px) 60px;max-width:980px;width:100%}
+section[hidden]{display:none}
+.hero{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:22px}
+.hero h1{font-size:clamp(30px,5vw,46px);font-weight:800;line-height:1.05}
+.hero p{margin:8px 0 0;color:var(--mute)}
+.ringbox{position:relative;width:128px;height:128px;flex:none}
+.ringbox svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ringbox circle{fill:none;stroke-width:11;stroke-linecap:round}
+.ringbox .bg{stroke:var(--line)}
+.ringbox .fg{stroke:var(--acc);transition:stroke-dashoffset .5s}
+.ringbox b{position:absolute;inset:0;display:grid;place-items:center;font:800 28px "Bricolage Grotesque",sans-serif}
+.wkhead{display:flex;align-items:center;gap:8px;margin-bottom:8px;color:var(--mute)}
+.wkhead button{background:none;border:1px solid var(--line);border-radius:10px;width:34px;height:30px;color:var(--ink)}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:22px}
+.day{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 4px;text-align:center;line-height:1.2}
+.day small{display:block;color:var(--mute);font-size:12px}
+.day strong{font:700 20px "Bricolage Grotesque",sans-serif}
+.day[aria-pressed="true"]{background:var(--acc);border-color:var(--acc);color:#fff}
+.day[aria-pressed="true"] small{color:#ffffffcc}
+.day .dots{display:block;height:6px;margin-top:4px;font-size:0}
+.day .dots s{display:inline-block;width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.5;margin:0 1px}
+.add{display:flex;gap:8px;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);padding:10px;border-radius:16px;margin-bottom:16px}
+.add input[type=text]{flex:1 1 200px;border:0;background:none;padding:10px;min-width:0}
+.add input:focus-visible{outline:0}
+.add select,.add input[type=number]{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:8px;width:auto}
+.add input[type=number]{width:84px}
+.btn{background:var(--acc);color:#fff;border:0;border-radius:12px;padding:10px 18px;font-weight:600}
+.btn:disabled{opacity:.5}
+.btn.ghost{background:none;color:var(--ink);border:1px solid var(--line)}
+.btn.ghost[aria-pressed="true"]{border-color:var(--acc);box-shadow:inset 0 0 0 1px var(--acc)}
+.filters{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.filters button{background:none;border:1px solid var(--line);border-radius:99px;padding:5px 14px;color:var(--mute)}
+.filters button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+ul.tasks{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.task{display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--lo);border-radius:14px;padding:12px 14px}
+.task.p-high{border-left-color:var(--hi)}.task.p-mid{border-left-color:var(--mid)}
+.task input,.step input{width:22px;height:22px;accent-color:var(--acc2);flex:none}
+.task span{flex:1;overflow-wrap:anywhere}
+.task.done span{text-decoration:line-through;color:var(--mute)}
+.task>button,.card button.x{background:none;border:0;color:var(--mute);font-size:20px;padding:2px 8px;border-radius:8px}
+.chip{font-style:normal;font-size:12px;padding:2px 9px;border-radius:99px;background:var(--bg);border:1px solid var(--line);color:var(--mute);white-space:nowrap}
+button.chip{font-size:14px;padding:6px 12px;color:var(--ink)}
+.chip.f{color:var(--acc2)}
+.empty{color:var(--mute);padding:26px;text-align:center;border:1px dashed var(--line);border-radius:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px}
+.hr{display:flex;align-items:center;gap:10px}.hr b{flex:1;overflow-wrap:anywhere}
+.hd{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:12px}
+.hdot{border:1px solid var(--line);background:none;border-radius:10px;padding:8px 0;color:var(--mute);font-size:12px}
+.hdot[aria-pressed="true"]{background:var(--acc2);border-color:var(--acc2);color:#fff}
+.hdot:disabled{opacity:.35;cursor:default}
+.prog{height:8px;background:var(--line);border-radius:9px;overflow:hidden;margin:10px 0}
+.prog i{display:block;height:100%;background:var(--acc2);transition:width .4s}
+.step{display:flex;align-items:center;gap:10px;padding:4px 0}
+.step.done span{text-decoration:line-through;color:var(--mute)}
+.row2{display:flex;gap:8px;margin-top:10px}
+.row2 input,.inp{flex:1;min-width:0;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.focus{display:grid;place-items:center;gap:20px;padding:14px 0}
+.timer{position:relative;width:min(290px,74vw);aspect-ratio:1}
+.timer svg{width:100%;height:100%;transform:rotate(-90deg)}
+.timer circle{fill:none;stroke-width:9;stroke-linecap:round}
+.timer .bg{stroke:var(--line)}.timer .fg{stroke:var(--acc2);transition:stroke-dashoffset 1s linear}
+.timer b{position:absolute;inset:0;display:grid;place-items:center;font:800 clamp(48px,14vw,68px) "Bricolage Grotesque",sans-serif;font-variant-numeric:tabular-nums}
+.row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;align-items:center}
+.msgs{display:flex;flex-direction:column;gap:10px;margin:14px 0;max-height:46vh;overflow-y:auto}
+.msg{padding:11px 14px;border-radius:16px;max-width:88%;overflow-wrap:anywhere}
+.msg.u{align-self:flex-end;background:var(--acc);color:#fff;border-bottom-right-radius:4px}
+.msg.a{align-self:flex-start;background:var(--panel);border:1px solid var(--line);border-bottom-left-radius:4px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:12px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px}
+.stat b{display:block;font:800 30px "Bricolage Grotesque",sans-serif;line-height:1.1}
+.stat span{color:var(--mute);font-size:14px}
+.bars{display:flex;align-items:flex-end;gap:10px;height:130px}
+.bars div{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:6px;font-size:12px;color:var(--mute)}
+.bars i{display:block;width:100%;background:var(--acc);border-radius:8px 8px 3px 3px;min-height:4px}
+textarea{width:100%;min-height:36vh;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;resize:vertical;line-height:1.6}
+#toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:99px;z-index:9;opacity:0;pointer-events:none;transition:opacity .25s;max-width:90vw}
+#toast.on{opacity:1}
+.app{grid-template-columns:240px 1fr}
+nav{margin:14px 0 14px 14px;top:14px;height:calc(100vh - 28px);background:var(--panel);border:1px solid var(--line);border-radius:28px}
+nav,.card,.stat,.add{-webkit-backdrop-filter:blur(20px) saturate(1.5);backdrop-filter:blur(20px) saturate(1.5)}
+.card,.stat,.add,.day,.task,.msg.a{box-shadow:0 12px 32px -18px rgba(30,36,120,.45),inset 0 1px 0 #ffffff26}
+.card,.stat,.add,textarea{border-radius:24px}
+.task,.day{border-radius:18px}
+.task,.task.p-high,.task.p-mid{border-left:1px solid var(--line);position:relative;padding-left:22px}
+.task::before{content:"";position:absolute;left:9px;top:14px;bottom:14px;width:4px;border-radius:4px;background:var(--lo)}
+.task.p-high::before{background:var(--hi)}.task.p-mid::before{background:var(--mid)}
+.hero h1{font-size:clamp(36px,6.4vw,60px);letter-spacing:-.04em}
+.btn{background:linear-gradient(135deg,var(--acc),#9a5cff);box-shadow:0 10px 24px -10px var(--acc);border-radius:14px}
+.day[aria-pressed="true"],.msg.u{background:linear-gradient(150deg,var(--acc),#9a5cff)}
+.day[aria-pressed="true"]{box-shadow:0 14px 28px -12px var(--acc);transform:translateY(-2px)}
+.day{transition:transform .2s,box-shadow .2s}
+nav button.tab[aria-selected="true"]{background:var(--ink);color:var(--bg);box-shadow:none}
+.task input,.step input{-webkit-appearance:none;appearance:none;width:24px;height:24px;border-radius:50%;border:2px solid var(--mute);display:grid;place-content:center;transition:background .2s,border-color .2s}
+.task input:checked,.step input:checked{background:var(--acc2);border-color:var(--acc2)}
+.task input:checked::after,.step input:checked::after{content:"";width:6px;height:11px;border:solid #fff;border-width:0 2.5px 2.5px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.axo{width:128px;height:112px;flex:none}
+.axo svg{width:100%;height:100%;overflow:visible;animation:axf 3.6s ease-in-out infinite}
+.axo .eye{transform-box:fill-box;transform-origin:center;animation:axb 4.5s infinite}
+.axo .gl,.axo .gr{transform-box:fill-box;animation:axs 3s ease-in-out infinite}
+.axo .gl{transform-origin:right center}.axo .gr{transform-origin:left center;animation-direction:reverse}
+.axo .orb{animation:axp 2s ease-in-out infinite}
+.axo.think svg{animation-duration:.7s}
+@keyframes axf{50%{transform:translateY(-6px)}}
+@keyframes axb{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+@keyframes axs{50%{transform:rotate(-8deg)}}
+@keyframes axp{50%{opacity:.35}}
+@media (prefers-reduced-motion:reduce){.axo *{animation:none!important}}
+.step{flex-wrap:wrap}.step span{flex:1;min-width:120px}
+.avatar{display:block;width:64px;height:64px;border-radius:50%;flex:none;cursor:pointer;overflow:hidden;box-shadow:0 0 0 3px var(--bg),0 0 0 5px var(--acc)}
+.avatar.big{width:96px;height:96px}
+.avatar:focus-within{outline:3px solid var(--acc);outline-offset:4px}
+.avimg{display:grid;place-items:center;width:100%;height:100%;background:linear-gradient(150deg,var(--acc),#9a5cff) center/cover;color:#fff;font:800 26px "Bricolage Grotesque",sans-serif}
+.swb{width:26px;height:26px;border-radius:50%;border:2px solid var(--bg);box-shadow:0 0 0 1px var(--line);padding:0}
+.chip.warn{color:var(--hi);border-color:var(--hi)}
+.card.done{opacity:.65}
+.add input[type=date]{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:8px}
+.mute{color:var(--mute)}
+@media (max-width:760px){
+.app{display:block}
+nav{position:fixed;inset:auto 12px calc(12px + env(safe-area-inset-bottom,0px)) 12px;margin:0;top:auto;height:auto;flex-direction:row;padding:6px;border-radius:26px;z-index:5;justify-content:space-around;box-shadow:0 16px 44px -10px rgba(10,14,60,.45)}
+.logo,.sp,.theme,#saved{display:none}
+nav button.tab{flex:1;text-align:center;padding:10px 2px;font-size:12.5px}
+nav button.tab{border-radius:20px}
+main{padding-bottom:120px}
+.week{gap:4px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<meta name="theme-color" content="#5b5cff">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Orbit Planner">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+
+</head>
+<body>
+<div class="app">
+<nav role="tablist" aria-label="Sections">
+<div class="logo"><i></i>Orbit</div>
+<button class="tab" role="tab" data-a="tab" data-v="plan" aria-selected="true">Plan</button>
+<button class="tab" role="tab" data-a="tab" data-v="track" aria-selected="false">Track</button>
+<button class="tab" role="tab" data-a="tab" data-v="study" aria-selected="false">Study</button>
+<button class="tab" role="tab" data-a="tab" data-v="focus" aria-selected="false">Focus</button>
+<button class="tab" role="tab" data-a="tab" data-v="coach" aria-selected="false">Axo</button>
+<button class="tab" role="tab" data-a="tab" data-v="review" aria-selected="false">Review</button>
+<div class="sp"></div>
+<button class="theme" data-a="theme">Switch theme</button>
+<small id="saved">Everything is saved</small>
+</nav>
+<main>
+
+<div id="install-tools" class="card" style="margin-bottom:18px">
+  <div class="hr"><b>📲 Orbit on your home screen</b><span class="chip">Lenovo tablet</span></div>
+  <p style="margin:8px 0;color:var(--mute)">Install Orbit like an app, and turn on reminders while it is open.</p>
+  <div class="row" style="justify-content:flex-start">
+    <button class="btn" id="install-app" type="button" hidden>Install app</button>
+    <button class="btn ghost" id="enable-reminders" type="button">Turn on reminders</button>
+    <button class="btn ghost" id="homework-reminder" type="button">Set homework reminder</button>
+    <button class="btn ghost" id="reminder-help" type="button">How to add icon</button>
+  </div>
+
+  <div id="homework-reminder-options" style="display:none;margin-top:12px">
+    <label for="homework-reminder-time">Remind me every day at:</label>
+    <input id="homework-reminder-time" type="time" value="17:00" style="margin:6px 0;padding:8px;border-radius:8px">
+    <button class="btn" id="save-homework-reminder" type="button">Save reminder</button>
+  </div>
+  <p id="reminder-status" aria-live="polite" style="margin:8px 0 0;color:var(--mute);font-size:13px">Get a notification reminding you to do your homework. Alerts work while Orbit is open; for reminders when it is closed, use your tablet’s Clock/Calendar app too.</p>
+</div>
+
+
+<section id="plan">
+<div class="hero">
+<div style="display:flex;align-items:center;gap:16px;min-width:0"><label class="avatar" title="Change your picture"><input type="file" class="picin" accept="image/*" hidden aria-label="Choose profile picture"><span class="avimg"></span></label><div><h1 id="greet">Hello</h1><p id="sub"></p></div></div>
+<div class="ringbox"><svg viewBox="0 0 128 128"><circle class="bg" cx="64" cy="64" r="54"/><circle class="fg" id="ring" cx="64" cy="64" r="54" stroke-dasharray="339.3" stroke-dashoffset="339.3"/></svg><b id="pct">0%</b></div>
+</div>
+<div class="wkhead"><button data-a="wk" data-n="-1" aria-label="Previous week">‹</button><span id="wklabel" class="sp"></span><button data-a="wk" data-n="0" aria-label="This week" title="This week">•</button><button data-a="wk" data-n="1" aria-label="Next week">›</button></div>
+<div class="week" id="week"></div>
+<div class="add">
+<input type="text" id="in" placeholder="Add a task for this day" aria-label="New task">
+<input type="number" id="est" min="5" step="5" placeholder="Min" aria-label="Estimated minutes">
+<select id="pri" aria-label="Priority"><option value="low">Low</option><option value="mid" selected>Medium</option><option value="high">High</option></select>
+<button class="btn" data-a="tadd">Add task</button>
+</div>
+<div class="filters" id="filters">
+<button data-a="filt" data-f="all" aria-pressed="true">All</button><button data-a="filt" data-f="open" aria-pressed="false">To do</button><button data-a="filt" data-f="done" aria-pressed="false">Done</button>
+<span class="sp"></span><button data-a="roll" id="roll" hidden>Move overdue to today</button><button data-a="clear" style="border-style:dashed">Clear done</button>
+</div>
+<ul class="tasks" id="list"></ul>
+</section>
+
+<section id="track" hidden>
+<div class="hero"><div><h1>Track</h1><p>Small habits and bigger goals, one check at a time.</p></div></div>
+<h2>Habits</h2>
+<div id="habits"></div>
+<div class="row2"><input data-ent="1" id="hin" placeholder="New habit, like “Read 20 pages”" aria-label="New habit"><button class="btn" data-a="hadd">Add habit</button></div>
+<h2>Goals</h2>
+<div id="goals"></div>
+<div class="row2"><input data-ent="1" id="gin" placeholder="New goal, like “Finish my project”" aria-label="New goal"><button class="btn" data-a="gnew">Add goal</button></div>
+</section>
+
+<section id="study" hidden>
+<div class="hero"><div><h1>Study</h1><p id="stsub"></p></div></div>
+<div class="add">
+<input type="text" id="hwt" placeholder="Homework, like “Maths worksheet 4”" aria-label="Homework title">
+<input type="text" id="hws" list="subs" placeholder="Subject" aria-label="Subject" style="flex:0 1 120px;border:1px solid var(--line);background:var(--bg);border-radius:10px">
+<datalist id="subs"><option value="Maths"><option value="English"><option value="Science"><option value="History"><option value="Geography"><option value="Languages"><option value="Other"></datalist>
+<input type="date" id="hwd" aria-label="Due date">
+<button class="btn" data-a="hwnew">Add homework</button>
+</div>
+<div class="chips">
+<button class="chip" data-a="stq" data-q="Look at my homework and plan which to do first this week, with rough times.">Plan my homework week</button>
+<button class="chip" data-a="stq" data-q="Give me a simple method for studying for a test in three days.">Study for a test</button>
+<button class="chip" data-a="stq" data-q="I keep procrastinating on homework. Give me a few tricks that actually work.">Stop procrastinating</button>
+</div>
+<div id="hw"></div>
+</section>
+<section id="focus" hidden>
+<div class="hero"><div><h1>Focus</h1><p>Pick a task, start the clock, and stay with it.</p></div></div>
+<div class="focus">
+<div class="row"><button class="btn ghost" data-a="mode" data-m="focus" id="mFocus" aria-pressed="true">Focus</button><button class="btn ghost" data-a="mode" data-m="break" id="mBreak" aria-pressed="false">Break</button>
+<select class="inp" id="dur" aria-label="Focus length" style="flex:none"><option value="15">15 min</option><option value="25" selected>25 min</option><option value="50">50 min</option></select></div>
+<select class="inp" id="ftask" aria-label="Task to work on" style="flex:none;width:min(360px,90%)"></select>
+<div class="timer"><svg viewBox="0 0 128 128"><circle class="bg" cx="64" cy="64" r="58"/><circle class="fg" id="tring" cx="64" cy="64" r="58" stroke-dasharray="364.4" stroke-dashoffset="0"/></svg><b id="clock">25:00</b></div>
+<div class="row"><button class="btn" data-a="go" id="go">Start</button><button class="btn ghost" data-a="reset">Reset</button></div>
+<p class="mute" id="sessions"></p>
+</div>
+</section>
+
+<section id="coach" hidden>
+<div class="hero"><div style="display:flex;align-items:center;gap:18px"><div class="axo" id="axo"><svg viewBox="0 0 160 140" role="img" aria-label="Axo the space axolotl"><path d="M108 104q38 2 34 30q-24 0-46-12z" fill="#ff8fb8"/><g class="gl" fill="none" stroke="#ff5d8f" stroke-width="6" stroke-linecap="round"><path d="M54 64Q36 50 22 40"/><path d="M50 74Q30 72 12 68"/><path d="M54 84Q36 92 22 100"/><circle cx="22" cy="40" r="4" fill="#ff5d8f"/><circle cx="12" cy="68" r="4" fill="#ff5d8f"/><circle cx="22" cy="100" r="4" fill="#ff5d8f"/></g><g class="gr" fill="none" stroke="#ff5d8f" stroke-width="6" stroke-linecap="round"><path d="M106 64Q124 50 138 40"/><path d="M110 74Q130 72 148 68"/><path d="M106 84Q124 92 138 100"/><circle cx="138" cy="40" r="4" fill="#ff5d8f"/><circle cx="148" cy="68" r="4" fill="#ff5d8f"/><circle cx="138" cy="100" r="4" fill="#ff5d8f"/></g><ellipse cx="80" cy="108" rx="36" ry="24" fill="#ff9ec4"/><ellipse cx="62" cy="128" rx="11" ry="7" fill="#ff8fb8"/><ellipse cx="98" cy="128" rx="11" ry="7" fill="#ff8fb8"/><ellipse cx="80" cy="112" rx="22" ry="16" fill="#ffd3e5"/><ellipse cx="80" cy="76" rx="50" ry="40" fill="#ff9ec4"/><path d="M80 38V24" stroke="#ff5d8f" stroke-width="4" stroke-linecap="round"/><circle class="orb" cx="80" cy="18" r="7" fill="#14c39a"/><circle cx="50" cy="88" r="7" fill="#ff7aa8" opacity=".55"/><circle cx="110" cy="88" r="7" fill="#ff7aa8" opacity=".55"/><g class="eye"><circle cx="62" cy="74" r="6.5" fill="#1b1d3a"/><circle cx="64" cy="72" r="2.2" fill="#fff"/></g><g class="eye"><circle cx="98" cy="74" r="6.5" fill="#1b1d3a"/><circle cx="100" cy="72" r="2.2" fill="#fff"/></g><path d="M71 89q9 9 18 0" fill="none" stroke="#1b1d3a" stroke-width="3" stroke-linecap="round"/></svg></div><div><h1>Axo</h1><p id="aistat">Waking Axo up…</p></div></div></div>
+<div class="card">
+<b>Turn a goal into tasks</b>
+<div class="row2"><input data-ent="1" id="aigoal" placeholder="Describe a goal or a messy to-do list" aria-label="Goal to plan"><button class="btn" data-a="aimk">Make tasks</button></div>
+<div id="aiprev"></div>
+</div>
+<div class="chips">
+<button class="chip" data-a="chip" data-q="Plan my day using my tasks. Tell me what to do first and when to take breaks.">Plan my day</button>
+<button class="chip" data-a="chip" data-q="I feel overwhelmed. Help me pick the three things that matter most today.">I feel overwhelmed</button>
+<button class="chip" data-a="chip" data-q="Look at my habits and goals and tell me one thing to improve this week.">Review my progress</button>
+</div>
+<div class="msgs" id="msgs" aria-live="polite"></div>
+<div class="row2"><input data-ent="1" id="chat" placeholder="Ask offline Axo for help" aria-label="Message to Axo"><button class="btn" data-a="send">Send</button></div>
+<h2>Daily goals</h2>
+<p class="mute" style="margin-top:-4px">Goals you repeat every day, like reading or studying. Tick them off each day and ask Axo for advice on any of them.</p>
+<div id="daily"></div>
+<div class="row2"><input data-ent="1" id="din" placeholder="Goal, like “Read 20 pages of my book”" aria-label="New daily goal"><button class="btn" data-a="dadd">Add goal</button></div>
+<div class="chips" style="margin-top:10px"><button class="chip" data-a="dsug" data-q="Read 20 pages of my book">Read 20 pages</button><button class="chip" data-a="dsug" data-q="Study for 30 minutes">Study 30 minutes</button><button class="chip" data-a="dsug" data-q="Review my notes">Review my notes</button></div>
+</section>
+
+<section id="review" hidden>
+<div class="hero"><div><h1>Review</h1><p id="lvl"></p></div></div>
+<div class="grid2" id="stats"></div>
+<div class="card"><b>Tasks finished, last 7 days</b><div class="bars" id="bars" style="margin-top:14px"></div></div>
+<h2>Notes</h2>
+<textarea id="nt" placeholder="Ideas, reminders, anything you don’t want to forget." aria-label="Notes"></textarea>
+<h2>Your profile and backup</h2>
+<div class="card">
+<div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap"><label class="avatar big" title="Change your picture"><input type="file" class="picin" accept="image/*" hidden aria-label="Choose profile picture"><span class="avimg"></span></label><div style="flex:1;min-width:190px"><div class="row2" style="margin-top:0"><input id="nm" placeholder="Your name" aria-label="Your name"></div><div class="row" style="justify-content:flex-start;margin-top:12px"><button class="chip" data-a="picdel">Remove picture</button><span class="mute">Accent</span><button class="swb" data-a="acc" data-c="#5b5cff" style="background:#5b5cff" aria-label="Indigo"></button><button class="swb" data-a="acc" data-c="#ff5d8f" style="background:#ff5d8f" aria-label="Pink"></button><button class="swb" data-a="acc" data-c="#14c39a" style="background:#14c39a" aria-label="Green"></button><button class="swb" data-a="acc" data-c="#ff9f1c" style="background:#ff9f1c" aria-label="Orange"></button><button class="swb" data-a="acc" data-c="#22b8ff" style="background:#22b8ff" aria-label="Blue"></button></div></div></div><p class="mute" style="margin:14px 0 0">Your picture, notes and homework stay on this device. Nothing is uploaded.</p>
+<div class="row" style="justify-content:flex-start;margin-top:12px"><button class="btn ghost" data-a="exp">Download backup</button><label class="btn ghost">Restore backup<input type="file" id="imp" accept=".json,application/json" hidden></label></div>
+<textarea id="bk" hidden style="min-height:120px;margin-top:12px" aria-label="Backup text"></textarea>
+</div>
+</section>
+
+</main>
+</div>
+<div id="toast" role="status"></div>
+<script>
+(function(){
+var $=function(s){return document.querySelector(s)};
+var S={tasks:[],habits:[],goals:[],daily:[],hw:[],pic:'',acc:'',notes:'',sessions:{},focus:{},name:'',theme:'',chat:[]};
+try{var raw=localStorage.getItem('orbit');if(raw)Object.assign(S,JSON.parse(raw))}catch(e){}
+var sv;
+function save(){try{localStorage.setItem('orbit',JSON.stringify(S));$('#saved').textContent='Saved just now';clearTimeout(sv);sv=setTimeout(function(){$('#saved').textContent='Everything is saved'},2500)}catch(e){$('#saved').textContent='Couldn’t save in this browser'}}
+function key(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function ad(k,n){var d=new Date(k+'T12:00:00');d.setDate(d.getDate()+n);return key(d)}
+var TK=key(new Date()),sel=TK,filter='all',wo=0,pending=[],sample=null,dl=null,ai='wait';
+var DN=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function toast(m){var t=$('#toast');t.textContent=m;t.className='on';clearTimeout(toast.t);toast.t=setTimeout(function(){t.className=''},2400)}
+function weekDays(off){var b=ad(TK,off*7),dow=(new Date(b+'T12:00:00').getDay()+6)%7,o=[];for(var i=0;i<7;i++)o.push(ad(b,i-dow));return o}
+function streak(h){var n=0,k=TK;if(!h.log[k])k=ad(k,-1);while(h.log[k]){n++;k=ad(k,-1)}return n}
+function gp(g){return g.steps.length?Math.round(g.steps.filter(function(s){return s.done}).length/g.steps.length*100):0}
+
+function renderPlan(){
+ var h=new Date().getHours(),g=h<12?'Good morning':h<18?'Good afternoon':'Good evening',nm=S.name?', '+S.name:'';
+ var sd=new Date(sel+'T12:00:00');
+ $('#greet').textContent=sel===TK?g+nm+'.':sd.toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'});
+ var day=S.tasks.filter(function(t){return t.d===sel}),done=day.filter(function(t){return t.done}).length;
+ var mins=day.filter(function(t){return !t.done}).reduce(function(a,t){return a+(t.est||0)},0);
+ $('#sub').textContent=day.length?(done+' of '+day.length+' done'+(mins?' · about '+(mins>=60?Math.floor(mins/60)+'h '+(mins%60?mins%60+'m':''):mins+'m')+' left':'')):'Nothing planned yet. Add your first task below.';
+ var p=day.length?Math.round(done/day.length*100):0;
+ $('#pct').textContent=p+'%';$('#ring').style.strokeDashoffset=339.3*(1-p/100);
+ var wd=weekDays(wo);
+ $('#wklabel').textContent=new Date(wd[0]+'T12:00:00').toLocaleDateString(undefined,{month:'long',day:'numeric'})+' – '+new Date(wd[6]+'T12:00:00').toLocaleDateString(undefined,{month:'short',day:'numeric'});
+ $('#week').innerHTML=wd.map(function(k){var d=new Date(k+'T12:00:00'),n=S.tasks.filter(function(t){return t.d===k&&!t.done}).length,dots='';for(var j=0;j<Math.min(n,4);j++)dots+='<s></s>';
+  return '<button class="day" data-a="day" data-d="'+k+'" aria-pressed="'+(k===sel)+'"><small>'+DN[d.getDay()]+'</small><strong>'+d.getDate()+'</strong><span class="dots">'+dots+'</span></button>'}).join('');
+ var shown=day.filter(function(t){return filter==='all'||(filter==='done'?t.done:!t.done)}),o={high:0,mid:1,low:2};
+ shown.sort(function(a,b){return a.done-b.done||o[a.p]-o[b.p]});
+ $('#list').innerHTML=shown.length?shown.map(function(t){return '<li class="task p-'+t.p+(t.done?' done':'')+'"><input type="checkbox" data-a="tdone" data-id="'+t.id+'" '+(t.done?'checked':'')+' aria-label="Mark done"><span>'+esc(t.t)+'</span>'+(t.est?'<em class="chip">'+t.est+'m</em>':'')+(t.spent?'<em class="chip f">'+t.spent+'m focused</em>':'')+'<button data-a="tdel" data-id="'+t.id+'" aria-label="Delete task">×</button></li>'}).join(''):'<li class="empty">'+(day.length?'No tasks in this filter.':'A clear day. Add a task or ask the Coach to plan it.')+'</li>';
+ document.querySelectorAll('#filters [data-f]').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.f===filter)});
+ var od=S.tasks.filter(function(t){return t.d<TK&&!t.done}).length;$('#roll').hidden=!od;$('#roll').textContent='Move '+od+' overdue to today';
+ var ft=$('#ftask'),cur=ft.value;ft.innerHTML='<option value="">No specific task</option>'+S.tasks.filter(function(t){return t.d===TK&&!t.done}).map(function(t){return '<option value="'+t.id+'">'+esc(t.t)+'</option>'}).join('');ft.value=cur;
+}
+function renderTrack(){
+ var wd=weekDays(0);
+ $('#habits').innerHTML=S.habits.length?S.habits.map(function(h){return '<div class="card"><div class="hr"><b>'+esc(h.name)+'</b><em class="chip f">'+streak(h)+' day streak</em><button class="x" data-a="hdel" data-id="'+h.id+'" aria-label="Delete habit">×</button></div><div class="hd">'+wd.map(function(k){return '<button class="hdot" data-a="htog" data-id="'+h.id+'" data-d="'+k+'" aria-pressed="'+!!h.log[k]+'" '+(k>TK?'disabled':'')+'>'+DN[new Date(k+'T12:00:00').getDay()]+'</button>'}).join('')+'</div></div>'}).join(''):'<div class="empty">No habits yet. Start with one you can do in under five minutes.</div>';
+ $('#goals').innerHTML=S.goals.length?S.goals.map(function(g){var p=gp(g);return '<div class="card"><div class="hr"><b>'+esc(g.name)+'</b><em class="chip">'+p+'%</em><button class="x" data-a="gdel" data-id="'+g.id+'" aria-label="Delete goal">×</button></div><div class="prog"><i style="width:'+p+'%"></i></div>'+g.steps.map(function(s,i){return '<label class="step'+(s.done?' done':'')+'"><input type="checkbox" data-a="gstep" data-id="'+g.id+'" data-i="'+i+'" '+(s.done?'checked':'')+'><span>'+esc(s.t)+'</span></label>'}).join('')+'<div class="row2"><input data-ent="1" placeholder="Add a step" aria-label="New step"><button class="btn ghost" data-a="gadd" data-id="'+g.id+'">Add</button></div></div>'}).join(''):'<div class="empty">No goals yet. Break a big goal into steps you can tick off.</div>';
+}
+function renderReview(){
+ var wd=weekDays(0),all=S.tasks.filter(function(t){return t.doneOn}),
+ cnt=function(k){return all.filter(function(t){return t.doneOn===k}).length};
+ var last7=[6,5,4,3,2,1,0].map(function(i){return ad(TK,-i)}),wk=last7.reduce(function(a,k){return a+cnt(k)},0);
+ var fm=last7.reduce(function(a,k){return a+(S.focus[k]||0)},0),st=0,k=TK;if(!cnt(k))k=ad(k,-1);while(cnt(k)){st++;k=ad(k,-1)}
+ var hc=S.habits.reduce(function(a,h){return a+last7.filter(function(k){return h.log[k]}).length},0),hr=S.habits.length?Math.round(hc/(S.habits.length*7)*100):0;
+ var xp=all.length*10+Object.keys(S.focus).reduce(function(a,k){return a+S.focus[k]},0)+S.habits.reduce(function(a,h){return a+Object.keys(h.log).length*5},0),lv=Math.floor(Math.sqrt(xp/40))+1;
+ $('#lvl').textContent='Level '+lv+' · '+xp+' XP · '+(40*lv*lv-xp)+' XP to level '+(lv+1);
+ $('#stats').innerHTML=[[wk,'tasks done this week'],[st,'day streak'],[fm,'focus minutes this week'],[hr+'%','habits kept this week']].map(function(s){return '<div class="stat"><b>'+s[0]+'</b><span>'+s[1]+'</span></div>'}).join('');
+ var mx=Math.max.apply(null,last7.map(cnt).concat(1));
+ $('#bars').innerHTML=last7.map(function(k){var n=cnt(k);return '<div><span>'+n+'</span><i style="height:'+Math.round(n/mx*80)+'px"></i>'+DN[new Date(k+'T12:00:00').getDay()]+'</div>'}).join('');
+}
+function renderChat(){
+ var m=S.chat.map(function(c){return '<div class="msg '+(c.role==='user'?'u':'a')+'">'+(esc(c.content)||'…').replace(/\n/g,'<br>')+'</div>'}).join('');
+ $('#msgs').innerHTML='<div class="msg a">Blub blub, hi! I’m Axo. I can plan your day, break down a goal, or help you decide what matters most.</div>'+m;
+ $('#msgs').scrollTop=1e6;var l=S.chat[S.chat.length-1];$('#axo').classList.toggle('think',!!l&&l.role==='assistant'&&!l.content);
+ $('#aistat').textContent=ai==='ok'?'Your space axolotl coach. Axo has read your tasks, habits and goals.':ai==='wait'?'Waking Axo up…':'Axo only visits when this page is opened in Claude.';
+ document.querySelectorAll('[data-a="aimk"],[data-a="send"],[data-a="chip"],[data-a="dtip"],[data-a="stq"],[data-a="hwtip"]').forEach(function(b){b.disabled=ai!=='ok'});
+}
+function renderDaily(){
+ var n=S.daily.filter(function(d){return d.log[TK]}).length;
+ $('#daily').innerHTML=S.daily.length?'<div class="card"><p class="mute" style="margin:0 0 6px">'+n+' of '+S.daily.length+' done today. The checks reset every morning.</p>'+S.daily.map(function(d){return '<div class="step'+(d.log[TK]?' done':'')+'"><input type="checkbox" data-a="dtog" data-id="'+d.id+'" '+(d.log[TK]?'checked':'')+' aria-label="Done today"><span>'+esc(d.name)+'</span><em class="chip f">'+streak(d)+' day streak</em><button class="chip" data-a="dtip" data-id="'+d.id+'">Ask Axo</button><button class="x" data-a="ddel" data-id="'+d.id+'" aria-label="Delete goal">×</button></div>'}).join('')+'</div>':'<div class="empty">No daily goals yet. Add one like “Read 20 pages of my book”.</div>';
+}
+function due(d){if(!d)return null;var df=Math.round((new Date(d+'T12:00:00')-new Date(TK+'T12:00:00'))/864e5);return df<0?['Overdue',1]:df===0?['Due today',1]:df===1?['Due tomorrow',0]:['Due '+new Date(d+'T12:00:00').toLocaleDateString(undefined,{month:'short',day:'numeric'}),0]}
+function renderStudy(){
+ var open=S.hw.filter(function(h){return !h.done}),soon=open.filter(function(h){return h.due&&h.due<=ad(TK,2)}).length;
+ $('#stsub').textContent=open.length?open.length+' to do'+(soon?' · '+soon+' due in the next two days':''):'No homework left. Enjoy it.';
+ var list=S.hw.slice().sort(function(a,b){return (a.done?1:0)-(b.done?1:0)||(a.due||'9999').localeCompare(b.due||'9999')});
+ $('#hw').innerHTML=list.length?list.map(function(h){var du=!h.done&&due(h.due),p=h.subs.length?Math.round(h.subs.filter(function(s){return s.done}).length/h.subs.length*100):0;
+  return '<div class="card'+(h.done?' done':'')+'"><div class="step'+(h.done?' done':'')+'" style="padding:0"><input type="checkbox" data-a="hwtog" data-id="'+h.id+'" '+(h.done?'checked':'')+' aria-label="Mark homework done"><span><b>'+esc(h.title)+'</b></span>'+(h.subj?'<em class="chip">'+esc(h.subj)+'</em>':'')+(du?'<em class="chip'+(du[1]?' warn':'')+'">'+du[0]+'</em>':'')+'<button class="x" data-a="hwdel" data-id="'+h.id+'" aria-label="Delete homework">×</button></div>'+(h.subs.length?'<div class="prog"><i style="width:'+p+'%"></i></div>':'')+h.subs.map(function(s,i){return '<label class="step'+(s.done?' done':'')+'"><input type="checkbox" data-a="hwsub" data-id="'+h.id+'" data-i="'+i+'" '+(s.done?'checked':'')+'><span>'+esc(s.t)+'</span></label>'}).join('')+'<div class="row2"><input data-ent="1" placeholder="Add a small task" aria-label="New small task"><button class="btn ghost" data-a="hwadd" data-id="'+h.id+'">Add</button><button class="chip" data-a="hwtip" data-id="'+h.id+'">Study advice</button></div></div>'}).join(''):'<div class="empty">No homework yet. Add an assignment, then break it into small tasks.</div>';
+}
+function renderPic(){document.querySelectorAll('.avimg').forEach(function(e){e.style.backgroundImage=S.pic?'url('+S.pic+')':'';e.textContent=S.pic?'':(S.name||'Me').charAt(0).toUpperCase()})}
+function setPic(f){var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var c=document.createElement('canvas'),s=Math.min(im.width,im.height);c.width=c.height=256;c.getContext('2d').drawImage(im,(im.width-s)/2,(im.height-s)/2,s,s,0,0,256,256);S.pic=c.toDataURL('image/jpeg',.85);save();renderPic();toast('Picture updated')};im.onerror=function(){toast('That image couldn’t be read')};im.src=r.result};r.readAsDataURL(f)}
+function renderAll(){renderPlan();renderTrack();renderReview();renderDaily();renderStudy();renderPic();renderChat()}
+
+function ctx(){
+ var td=S.tasks.filter(function(t){return t.d===TK}).map(function(t){return (t.done?'[done] ':'[open] ')+t.t+(t.est?' ('+t.est+'m)':'')+' ['+t.p+']'}).join('; ')||'none',
+ od=S.tasks.filter(function(t){return t.d<TK&&!t.done}).length;
+ return 'You are Axo, a cheerful space axolotl who works as the planning coach inside the Orbit planner app. Stay warm and playful in character, with at most one light space or water pun per reply and no actions in asterisks. Reply in under 120 words, plain text with no markdown, and be specific to the data. Today is '+new Date().toDateString()+'.'+(S.name?' The user is '+S.name+'.':'')+' Today’s tasks: '+td+'. Overdue tasks: '+od+'. Habits: '+(S.habits.map(function(h){return h.name+' (streak '+streak(h)+')'}).join(', ')||'none')+'. Goals: '+(S.goals.map(function(g){return g.name+' '+gp(g)+'% done'}).join(', ')||'none')+'. Daily goals: '+(S.daily.map(function(d){return d.name+(d.log[TK]?' (done today)':' (not done yet)')+', streak '+streak(d)}).join('; ')||'none')+'. Homework still to do: '+(S.hw.filter(function(h){return !h.done}).map(function(h){return h.title+(h.subj?' ('+h.subj+')':'')+(h.due?', due '+h.due:'')}).join('; ')||'none')+'. Focus minutes today: '+(S.focus[TK]||0)+'.';
+}
+function localReply(q){
+ q=String(q||'').trim();var l=q.toLowerCase();
+ var tasks=S.tasks.filter(function(t){return t.d===TK&&!t.done;}),overdue=S.tasks.filter(function(t){return t.d<TK&&!t.done;}),openHw=S.hw.filter(function(h){return !h.done;});
+ if(/plan my day|what.*first|priorit|overwhelmed|three things|too much/.test(l)){
+  var chosen=tasks.slice().sort(function(a,b){return ({high:0,mid:1,low:2}[a.p]||1)-({high:0,mid:1,low:2}[b.p]||1)}).slice(0,3);
+  if(!chosen.length)return 'Let’s keep today manageable. Add your tasks to Plan, then I can help you sort them. Start with one small task and work for 20–25 minutes before taking a break.';
+  return 'Start with '+chosen.map(function(t,i){return (i+1)+') '+t.t;}).join('; ')+'. Work for 25 minutes, take a 5-minute break, then review what remains.'+(overdue.length?' You also have '+overdue.length+' overdue task(s) to check.':'');
+ }
+ if(/homework|assignment|worksheet|due/.test(l))return openHw.length?'You have '+openHw.length+' homework item(s) left: '+openHw.slice(0,4).map(function(h){return h.title+(h.due?' (due '+h.due+')':'');}).join(', ')+'. Start with the easiest part and split the rest into 10–20 minute steps.':'You have no unfinished homework saved here. Add the assignment in Study, then split it into small steps.';
+ if(/habit|consistent|routine|every day/.test(l))return 'Make the habit tiny enough to repeat: choose a fixed time, do 2–5 minutes to get started, and tick it off in Track or Daily goals. If you miss a day, restart the next day.';
+ if(/study|revise|revision|test|exam|gcse|remember|memor/.test(l))return 'Try this study loop: learn one small section, close your notes and recall the key points, answer practice questions without help, then mark them and fix mistakes. Revisit the topic tomorrow. Tell me the subject and topic for a focused plan.';
+ if(/procrastinat|can't start|cannot start|motivat|lazy/.test(l))return 'Use the 5-minute start: choose the smallest useful action, put your phone away, and work for just five minutes. What task are you avoiding?';
+ if(/break|pomodoro|focus|timer/.test(l))return 'Try 25 minutes of focused work followed by a 5-minute break. For a hard task, begin with 15 minutes. Use the Focus tab to run the timer.';
+ if(/progress|improve|goal/.test(l))return 'Pick one goal and define the next action you can finish today. Saved goals: '+(S.goals.map(function(g){return g.name+' ('+gp(g)+'%)';}).join(', ')||'none yet')+'. Your Review tab shows completed tasks and focus time.';
+ if(/hello|hi\b|hey\b/.test(l))return 'Blub blub! Hi! I’m Axo, your offline planning coach. I can help with study routines, homework, focus, habits, and breaking goals into steps. What are you working on?';
+ return 'Let’s break that down into something manageable. Write the outcome you want, then choose one action that takes under 15 minutes. I can help with study routines, homework, habits, focus, and planning. For a school topic, include the subject and exact question.';
+}
+function ask(q){
+ if(!q)return;S.chat.push({role:'user',content:q});S.chat.push({role:'assistant',content:localReply(q)});
+ S.chat=S.chat.slice(-30);save();renderChat();
+}
+function makeLocalTasks(v){
+ var raw=String(v||'').trim(),out=[];if(!raw)return out;
+ var bits=raw.split(/[,;\n]+/).map(function(x){return x.trim();}).filter(Boolean);
+ if(bits.length>1)out=bits.slice(0,8).map(function(x){return {t:/^(read|write|finish|revise|study|review|complete|make|prepare|practise|practice|send|organise|organize|plan|do|check|learn)\b/i.test(x)?x:'Work on '+x,p:'mid',est:20};});
+ else if(/study|revise|exam|test|gcse|math|science|english|history|geography/i.test(raw))out=[
+  {t:'Choose one topic and review the key ideas',p:'high',est:15},
+  {t:'Answer practice questions without notes',p:'high',est:20},
+  {t:'Mark answers and correct mistakes',p:'mid',est:15},
+  {t:'Write down what to review next',p:'low',est:5}
+ ];
+ else if(/room|clean|tidy/i.test(raw))out=[
+  {t:'Gather rubbish and put it in the bin',p:'high',est:10},
+  {t:'Put loose items back in their places',p:'mid',est:15},
+  {t:'Clear and wipe one surface',p:'low',est:10}
+ ];
+ else out=[
+  {t:'Define the next small step for: '+raw,p:'high',est:10},
+  {t:'Work on '+raw+' for 20 minutes',p:'high',est:20},
+  {t:'Check what is finished and list what remains',p:'mid',est:10}
+ ];
+ return out.slice(0,8);
+}
+function showPrev(){
+ $('#aiprev').innerHTML=pending.length?'<ul class="tasks" style="margin-top:12px">'+pending.map(function(t){return '<li class="task p-'+t.p+'"><span>'+esc(t.t)+'</span>'+(t.est?'<em class="chip">'+t.est+'m</em>':'')+'</li>'}).join('')+'</ul><div class="row2"><button class="btn" data-a="aiadd">Add '+pending.length+' tasks to '+(sel===TK?'today':new Date(sel+'T12:00:00').toLocaleDateString(undefined,{weekday:'long'}))+'</button></div>':'';
+}
+function show(v){document.querySelectorAll('.tab').forEach(function(b){b.setAttribute('aria-selected',b.dataset.v===v)});['plan','track','study','focus','coach','review'].forEach(function(s){$('#'+s).hidden=s!==v});if(v==='review')renderReview()}
+function addTask(t,p,est,d){S.tasks.push({id:Date.now()+Math.floor(Math.random()*1000),t:t,done:false,p:p,est:est||0,d:d||sel})}
+
+var A={
+ tab:function(b){show(b.dataset.v)},
+ theme:function(){var dark=document.documentElement.dataset.theme?document.documentElement.dataset.theme==='dark':matchMedia('(prefers-color-scheme:dark)').matches;S.theme=dark?'light':'dark';document.documentElement.dataset.theme=S.theme;save()},
+ day:function(b){sel=b.dataset.d;renderPlan()},
+ wk:function(b){var n=+b.dataset.n;wo=n?wo+n:0;if(!n)sel=TK;renderPlan()},
+ filt:function(b){filter=b.dataset.f;renderPlan()},
+ tadd:function(){var v=$('#in').value.trim();if(!v)return;addTask(v,$('#pri').value,+$('#est').value);$('#in').value='';$('#est').value='';save();renderAll()},
+ tdone:function(b){var t=S.tasks.find(function(t){return t.id==b.dataset.id});if(t){t.done=!t.done;t.doneOn=t.done?TK:null;save();renderAll()}},
+ tdel:function(b){S.tasks=S.tasks.filter(function(t){return t.id!=b.dataset.id});save();renderAll()},
+ clear:function(){S.tasks=S.tasks.filter(function(t){return !(t.d===sel&&t.done)});save();renderAll()},
+ roll:function(){S.tasks.forEach(function(t){if(t.d<TK&&!t.done)t.d=TK});save();renderAll();toast('Moved to today')},
+ hadd:function(b){var i=b.previousElementSibling,v=i.value.trim();if(!v)return;S.habits.push({id:Date.now(),name:v,log:{}});i.value='';save();renderAll()},
+ htog:function(b){var h=S.habits.find(function(h){return h.id==b.dataset.id}),k=b.dataset.d;if(h){if(h.log[k])delete h.log[k];else h.log[k]=1;save();renderAll()}},
+ hdel:function(b){S.habits=S.habits.filter(function(h){return h.id!=b.dataset.id});save();renderAll()},
+ gnew:function(b){var i=b.previousElementSibling,v=i.value.trim();if(!v)return;S.goals.push({id:Date.now(),name:v,steps:[]});i.value='';save();renderAll()},
+ gadd:function(b){var i=b.previousElementSibling,v=i.value.trim(),g=S.goals.find(function(g){return g.id==b.dataset.id});if(!v||!g)return;g.steps.push({t:v,done:false});save();renderAll()},
+ gstep:function(b){var g=S.goals.find(function(g){return g.id==b.dataset.id});if(g){var s=g.steps[+b.dataset.i];s.done=!s.done;save();renderAll()}},
+ gdel:function(b){S.goals=S.goals.filter(function(g){return g.id!=b.dataset.id});save();renderAll()},
+ mode:function(b){setMode(b.dataset.m)},
+ go:function(){if(iv){left=Math.max(0,Math.round((end-Date.now())/1000));stop();fmt();return}end=Date.now()+left*1000;$('#go').textContent='Pause';iv=setInterval(tick,500)},
+ reset:function(){setMode(mode)},
+ aimk:function(b){var i=b.previousElementSibling,v=i.value.trim();if(!v)return;pending=makeLocalTasks(v).map(function(x){return {t:String(x.t).slice(0,90),p:['high','mid','low'].indexOf(x.p)>-1?x.p:'mid',est:Math.min(480,Math.max(0,Math.round(+x.est||0)))}});showPrev();},
+ aiadd:function(){pending.forEach(function(t){addTask(t.t,t.p,t.est)});var n=pending.length;pending=[];$('#aigoal').value='';showPrev();save();renderAll();show('plan');toast(n+' tasks added')},
+ chip:function(b){ask(b.dataset.q)},
+ send:function(b){var i=b.previousElementSibling,v=i.value.trim();if(v){i.value='';ask(v)}},
+ dadd:function(b){var i=b.previousElementSibling,v=i.value.trim();if(!v)return;S.daily.push({id:Date.now(),name:v,log:{}});i.value='';save();renderAll()},
+ dsug:function(b){S.daily.push({id:Date.now(),name:b.dataset.q,log:{}});save();renderAll()},
+ dtog:function(b){var d=S.daily.find(function(d){return d.id==b.dataset.id});if(d){if(d.log[TK])delete d.log[TK];else d.log[TK]=1;save();renderAll()}},
+ ddel:function(b){S.daily=S.daily.filter(function(d){return d.id!=b.dataset.id});save();renderAll()},
+ dtip:function(b){var d=S.daily.find(function(d){return d.id==b.dataset.id});if(d){ask('Give me study advice for my daily goal: "'+d.name+'". Tell me how to split it up, the best time of day to do it, and how to stay consistent.');$('#msgs').scrollIntoView({behavior:'smooth',block:'center'})}},
+ hwnew:function(){var t=$('#hwt').value.trim();if(!t)return;S.hw.push({id:Date.now(),title:t,subj:$('#hws').value.trim(),due:$('#hwd').value,done:false,subs:[]});$('#hwt').value='';$('#hws').value='';$('#hwd').value='';save();renderAll()},
+ hwtog:function(b){var h=S.hw.find(function(h){return h.id==b.dataset.id});if(h){h.done=!h.done;save();renderAll()}},
+ hwdel:function(b){S.hw=S.hw.filter(function(h){return h.id!=b.dataset.id});save();renderAll()},
+ hwsub:function(b){var h=S.hw.find(function(h){return h.id==b.dataset.id});if(h){var s=h.subs[+b.dataset.i];s.done=!s.done;save();renderAll()}},
+ hwadd:function(b){var i=b.previousElementSibling,v=i.value.trim(),h=S.hw.find(function(h){return h.id==b.dataset.id});if(!v||!h)return;h.subs.push({t:v,done:false});save();renderAll()},
+ hwtip:function(b){var h=S.hw.find(function(h){return h.id==b.dataset.id});if(h){show('coach');ask('Give me study advice for this homework: "'+h.title+'"'+(h.subj?' ('+h.subj+')':'')+(h.due?', due '+h.due:'')+'. Tell me how to start, how to break it into small steps, and roughly how long it will take.')}},
+ stq:function(b){show('coach');ask(b.dataset.q)},
+ acc:function(b){S.acc=b.dataset.c;document.documentElement.style.setProperty('--acc',S.acc);save()},
+ picdel:function(){S.pic='';save();renderPic()},
+ exp:function(){var j=JSON.stringify(S,null,1);if(dl){dl.save({filename:'orbit-backup.json',data:j}).then(function(){toast('Backup saved')}).catch(function(){})}else{$('#bk').hidden=false;$('#bk').value=j;toast('Copy the backup text below')}}
+};
+document.addEventListener('click',function(e){var b=e.target.closest('[data-a]');if(b&&A[b.dataset.a])A[b.dataset.a](b)});
+document.addEventListener('keydown',function(e){if(e.key!=='Enter')return;var t=e.target;if(t.id==='in'||t.id==='est')A.tadd();else if(t.id==='hwt'||t.id==='hws')A.hwnew();else if(t.dataset&&t.dataset.ent&&t.nextElementSibling)t.nextElementSibling.click()});
+$('#imp').onchange=function(){var f=this.files[0];if(!f)return;f.text().then(function(t){var o=JSON.parse(t);if(!o||!Array.isArray(o.tasks))throw 0;Object.assign(S,o);save();renderAll();$('#nt').value=S.notes||'';$('#nm').value=S.name||'';toast('Backup restored')}).catch(function(){toast('That file isn’t a valid backup')})};
+$('#nt').value=S.notes||'';$('#nt').oninput=function(){S.notes=this.value;save()};
+$('#nm').value=S.name||'';$('#nm').oninput=function(){S.name=this.value.trim();save();renderPlan();renderPic()};
+if(S.theme)document.documentElement.dataset.theme=S.theme;
+if(S.acc)document.documentElement.style.setProperty('--acc',S.acc);
+document.addEventListener('change',function(e){var t=e.target;if(t.classList&&t.classList.contains('picin')&&t.files[0]){setPic(t.files[0]);t.value=''}});
+
+var mode='focus',left=1500,iv=null,end=0;
+function span(){return mode==='focus'?(+$('#dur').value)*60:300}
+function fmt(){var m=Math.floor(left/60),s=left%60;$('#clock').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');$('#tring').style.strokeDashoffset=364.4*(1-left/span());document.title=iv?$('#clock').textContent+' · Orbit':'Orbit Planner'}
+function stop(){clearInterval(iv);iv=null;$('#go').textContent='Start'}
+function setMode(m){mode=m;left=span();stop();$('#mFocus').setAttribute('aria-pressed',m==='focus');$('#mBreak').setAttribute('aria-pressed',m==='break');fmt()}
+function sess(){$('#sessions').textContent='Focused today: '+(S.focus[TK]||0)+' minutes across '+(S.sessions[TK]||0)+' sessions'}
+function tick(){left=Math.max(0,Math.round((end-Date.now())/1000));if(left>0){fmt();return}
+ if(mode==='focus'){var m=+$('#dur').value;S.sessions[TK]=(S.sessions[TK]||0)+1;S.focus[TK]=(S.focus[TK]||0)+m;var t=S.tasks.find(function(t){return t.id==$('#ftask').value});if(t)t.spent=(t.spent||0)+m;save();sess();renderPlan();toast('Session complete. Take a break.')}else toast('Break over. Ready for another round?');
+ setMode(mode==='focus'?'break':'focus')}
+$('#dur').onchange=function(){if(!iv)setMode('focus')};
+
+renderAll();fmt();sess();
+ai='ok';renderChat();
+})();
+
+// Home-screen installation and local reminders (no Claude, no API).
+(function(){
+  var installPrompt = null;
+  var installButton = document.getElementById('install-app');
+  var reminderButton = document.getElementById('enable-reminders');
+  var helpButton = document.getElementById('reminder-help');
+  var status = document.getElementById('reminder-status');
+
+  window.addEventListener('beforeinstallprompt', function(event){
+    event.preventDefault();
+    installPrompt = event;
+    if(installButton) installButton.hidden = false;
+  });
+  if(installButton) installButton.addEventListener('click', async function(){
+    if(!installPrompt){
+      status.textContent = 'Open Chrome menu ⋮, then choose “Install app” or “Add to Home screen”.';
+      return;
+    }
+    installPrompt.prompt();
+    try { await installPrompt.userChoice; } catch(e) {}
+    installPrompt = null;
+    installButton.hidden = true;
+  });
+  if(helpButton) helpButton.addEventListener('click', function(){
+    status.textContent = 'On your Lenovo tablet: open this site in Chrome → tap ⋮ (top-right) → “Add to Home screen” or “Install app” → Add. The icon will appear on your home screen.';
+  });
+  if(reminderButton) reminderButton.addEventListener('click', async function(){
+    if(!('Notification' in window)){
+      status.textContent = 'Notifications are not supported in this browser. Use the tablet Calendar or Clock app for reminders.';
+      return;
+    }
+    try {
+      var permission = Notification.permission;
+      if(permission === 'default') permission = await Notification.requestPermission();
+      if(permission === 'granted'){
+        status.textContent = 'Reminders are on while Orbit is open. Keep this page open for task due-date alerts.';
+        reminderButton.textContent = 'Reminders enabled ✓';
+        checkOrbitReminders();
+      } else {
+        status.textContent = 'Notifications are blocked. You can allow them in Chrome site settings.';
+      }
+    } catch(e) {
+      status.textContent = 'Could not enable notifications here. Use your tablet Calendar or Clock app for reliable reminders.';
+    }
+  });
+
+
+  var homeworkReminderButton = document.getElementById('homework-reminder');
+  var homeworkOptions = document.getElementById('homework-reminder-options');
+  var saveHomeworkReminder = document.getElementById('save-homework-reminder');
+  var homeworkTimeInput = document.getElementById('homework-reminder-time');
+  if(homeworkReminderButton && homeworkOptions){
+    homeworkReminderButton.addEventListener('click', function(){
+      homeworkOptions.style.display = homeworkOptions.style.display === 'none' ? 'block' : 'none';
+      try {
+        var saved = localStorage.getItem('orbit-homework-reminder-time');
+        if(saved && homeworkTimeInput) homeworkTimeInput.value = saved;
+      } catch(e) {}
+    });
+  }
+  if(saveHomeworkReminder){
+    saveHomeworkReminder.addEventListener('click', async function(){
+      if(!('Notification' in window)){
+        status.textContent = 'This browser does not support notifications. Set a homework reminder in your tablet Clock or Calendar app.';
+        return;
+      }
+      var permission = Notification.permission;
+      if(permission === 'default'){
+        try { permission = await Notification.requestPermission(); } catch(e) {}
+      }
+      if(permission !== 'granted'){
+        status.textContent = 'Notifications are blocked. Allow notifications for this website in Chrome settings, then try again.';
+        return;
+      }
+      var time = homeworkTimeInput && homeworkTimeInput.value ? homeworkTimeInput.value : '17:00';
+      try { localStorage.setItem('orbit-homework-reminder-time', time); } catch(e) {}
+      status.textContent = 'Homework reminder saved for ' + time + '. Keep Orbit open for the reminder to fire.';
+      scheduleHomeworkReminder();
+    });
+  }
+  var homeworkTimer = null;
+  function scheduleHomeworkReminder(){
+    if(homeworkTimer) clearTimeout(homeworkTimer);
+    try {
+      var time = localStorage.getItem('orbit-homework-reminder-time');
+      if(!time || !('Notification' in window) || Notification.permission !== 'granted') return;
+      var parts = time.split(':');
+      var now = new Date();
+      var target = new Date();
+      target.setHours(Number(parts[0]), Number(parts[1]), 0, 0);
+      if(target <= now) target.setDate(target.getDate()+1);
+      homeworkTimer = setTimeout(function(){
+        try {
+          new Notification('Homework reminder 📚', {
+            body: "You haven't done your homework yet. Open Orbit and finish one task now.",
+            icon: 'icon-192.png',
+            tag: 'orbit-homework-reminder'
+          });
+        } catch(e) {}
+        scheduleHomeworkReminder();
+      }, Math.min(target.getTime()-now.getTime(), 2147483647));
+    } catch(e) {}
+  }
+  scheduleHomeworkReminder();
+
+  function checkOrbitReminders(){
+    try {
+      if(!('Notification' in window) || Notification.permission !== 'granted') return;
+      var raw = localStorage.getItem('orbit');
+      if(!raw) return;
+      var state = JSON.parse(raw);
+      var today = new Date();
+      var key = today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');
+      var seenKey = 'orbit-reminders-seen-'+key;
+      var seen = {};
+      try { seen = JSON.parse(localStorage.getItem(seenKey)||'{}'); } catch(e) {}
+      var dueItems = [];
+      (state.hw||[]).forEach(function(h){
+        if(!h.done && h.due && h.due <= key && !seen['hw'+h.id]){
+          dueItems.push(h.title + (h.due < key ? ' (overdue)' : ' (due today)'));
+          seen['hw'+h.id] = true;
+        }
+      });
+      (state.tasks||[]).forEach(function(t){
+        if(!t.done && t.d && t.d <= key && !seen['task'+t.id]){
+          dueItems.push(t.t + (t.d < key ? ' (overdue)' : ' (due today)'));
+          seen['task'+t.id] = true;
+        }
+      });
+      if(dueItems.length){
+        new Notification('Orbit Planner: tasks to check', {
+          body: dueItems.slice(0,3).join(' • ')+(dueItems.length>3?' • and '+(dueItems.length-3)+' more':''),
+          icon: 'icon-192.png'
+        });
+        localStorage.setItem(seenKey, JSON.stringify(seen));
+      }
+    } catch(e) {}
+  }
+  window.addEventListener('load', checkOrbitReminders);
+  document.addEventListener('visibilitychange', function(){ if(!document.hidden) checkOrbitReminders(); });
+  if('serviceWorker' in navigator && /^https?:$/.test(location.protocol)){
+    window.addEventListener('load', function(){
+      navigator.serviceWorker.register('./service-worker.js').catch(function(){});
+    });
+  }
+})();
+
+</script>
+</body>
+</html>
