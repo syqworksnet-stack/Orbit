@@ -14,23 +14,23 @@ box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:en
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0;min-height:100vh;background:radial-gradient(60rem 40rem at 95% -10%,var(--g1),transparent 60%),radial-gradient(50rem 36rem at -10% 30%,var(--g2),transparent 60%),var(--bg);background-attachment:fixed;color:var(--ink);font:400 16px/1.5 "Instrument Sans",system-ui,sans-serif}
 h1,h2,h3,.disp{font-family:"Bricolage Grotesque","Instrument Sans",system-ui,sans-serif;margin:0;letter-spacing:-.02em}
-h2{font-size:20px;margin:22px 0 10px}
+h2{font-size:18px;margin:16px 0 8px}
 button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
 :focus-visible{outline:3px solid var(--acc);outline-offset:2px}
 .app{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
-nav{padding:28px 18px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:6px;position:sticky;top:0;height:100vh}
+nav{padding:20px 12px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:6px;position:sticky;top:0;height:100vh}
 .logo{font-weight:800;font-size:22px;margin:0 10px 22px;display:flex;align-items:center;gap:10px}
 .logo i{width:22px;height:22px;border-radius:50%;border:4px solid var(--acc);box-shadow:8px -6px 0 -2px var(--acc2)}
-nav button.tab{background:none;border:0;text-align:left;padding:11px 14px;border-radius:12px;font-weight:500;color:var(--mute)}
+nav button.tab{background:none;border:0;text-align:left;padding:9px 12px;border-radius:12px;font-weight:500;color:var(--mute)}
 nav button.tab[aria-selected="true"]{background:var(--panel);color:var(--ink);box-shadow:inset 3px 0 0 var(--acc)}
 .sp{flex:1}
 .theme{background:none;border:1px solid var(--line);border-radius:12px;padding:9px 14px;color:var(--mute)}
 #saved{color:var(--mute);font-size:13px;margin:8px 4px 0}
-main{padding:34px clamp(18px,4vw,48px) 60px;max-width:980px;width:100%}
+main{padding:20px clamp(12px,3vw,28px) 60px;max-width:900px;width:100%}
 section[hidden]{display:none}
 .hero{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:22px}
-.hero h1{font-size:clamp(30px,5vw,46px);font-weight:800;line-height:1.05}
+.hero h1{font-size:clamp(25px,4vw,36px);font-weight:800;line-height:1.08}
 .hero p{margin:8px 0 0;color:var(--mute)}
 .ringbox{position:relative;width:128px;height:128px;flex:none}
 .ringbox svg{width:100%;height:100%;transform:rotate(-90deg)}
@@ -71,7 +71,7 @@ ul.tasks{list-style:none;margin:0;padding:0;display:grid;gap:8px}
 button.chip{font-size:14px;padding:6px 12px;color:var(--ink)}
 .chip.f{color:var(--acc2)}
 .empty{color:var(--mute);padding:26px;text-align:center;border:1px dashed var(--line);border-radius:14px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px;margin-bottom:10px}
 .hr{display:flex;align-items:center;gap:10px}.hr b{flex:1;overflow-wrap:anywhere}
 .hd{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:12px}
 .hdot{border:1px solid var(--line);background:none;border-radius:10px;padding:8px 0;color:var(--mute);font-size:12px}
@@ -106,10 +106,10 @@ textarea{width:100%;min-height:36vh;background:var(--panel);border:1px solid var
 #toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:99px;z-index:9;opacity:0;pointer-events:none;transition:opacity .25s;max-width:90vw}
 #toast.on{opacity:1}
 .app{grid-template-columns:240px 1fr}
-nav{margin:14px 0 14px 14px;top:14px;height:calc(100vh - 28px);background:var(--panel);border:1px solid var(--line);border-radius:28px}
+nav{margin:10px 0 10px 10px;top:10px;height:calc(100vh - 20px);background:var(--panel);border:1px solid var(--line);border-radius:28px}
 nav,.card,.stat,.add{-webkit-backdrop-filter:blur(20px) saturate(1.5);backdrop-filter:blur(20px) saturate(1.5)}
 .card,.stat,.add,.day,.task,.msg.a{box-shadow:0 12px 32px -18px rgba(30,36,120,.45),inset 0 1px 0 #ffffff26}
-.card,.stat,.add,textarea{border-radius:24px}
+.card,.stat,.add,textarea{border-radius:16px}
 .task,.day{border-radius:18px}
 .task,.task.p-high,.task.p-mid{border-left:1px solid var(--line);position:relative;padding-left:22px}
 .task::before{content:"";position:absolute;left:9px;top:14px;bottom:14px;width:4px;border-radius:4px;background:var(--lo)}
@@ -155,6 +155,31 @@ main{padding-bottom:120px}
 .week{gap:4px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+#home .hero{margin-bottom:12px}#home .hero h1{margin:4px 0 6px}#home .grid2 .card{margin:0;padding:14px}#home .grid2 h2{font-size:24px}#flashcard-face{background:var(--bg2,rgba(127,127,127,.08));border:1px solid var(--line,rgba(127,127,127,.2));color:inherit}nav button.tab{white-space:nowrap} 
+
+.home-page{max-width:940px;margin:0 auto}
+.home-page .home-welcome{padding:18px 18px 16px;border-radius:18px}
+.home-page .home-welcome h1{margin:4px 0 6px;font-size:clamp(26px,4vw,36px)}
+.home-section{margin:14px 0;padding:15px;border:1px solid var(--line,rgba(127,127,127,.2));border-radius:16px;background:var(--card,transparent)}
+.home-section-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.home-section-heading h2{font-size:18px;margin:0}
+.home-section-desc{margin:0 0 10px;font-size:14px}
+.home-day-note{padding:12px 14px;border-radius:12px;background:var(--bg2,rgba(127,127,127,.08));line-height:1.5}
+.home-shortcuts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.home-shortcut{display:flex;align-items:center;gap:10px;text-align:left;min-width:0;padding:12px;border:1px solid var(--line,rgba(127,127,127,.2));border-radius:13px;background:var(--bg,transparent);color:inherit;cursor:pointer}
+.home-shortcut:hover{border-color:var(--acc,var(--accent,#5b5cff));transform:translateY(-1px)}
+.home-shortcut-icon{display:grid;place-items:center;flex:none;width:38px;height:38px;border-radius:11px;background:var(--bg2,rgba(127,127,127,.08));font-size:20px}
+.home-shortcut>span:nth-child(2){display:grid;gap:4px;min-width:0}
+.home-shortcut b{font-size:14px}
+.home-shortcut small{font-size:12px;color:var(--mute);line-height:1.35}
+.home-arrow{margin-left:auto;font-size:24px;color:var(--mute)}
+.home-quick-add{align-items:stretch}
+.home-tip-card{display:flex;gap:10px;align-items:flex-start;padding:12px;border-radius:12px;background:var(--bg2,rgba(127,127,127,.08))}
+.home-tip-card>span{font-size:21px}
+.home-tip-card p{margin:2px 0;line-height:1.5}
+.home-rest-section{border-style:dashed}
+@media(max-width:520px){.home-shortcuts{grid-template-columns:1fr}.home-section{padding:12px;margin:11px 0}.home-shortcut{padding:10px}.home-page .home-welcome{padding:14px}}
+
 </style>
 
 <meta name="theme-color" content="#5b5cff">
@@ -170,7 +195,9 @@ main{padding-bottom:120px}
 <div class="app">
 <nav role="tablist" aria-label="Sections">
 <div class="logo"><i></i>Orbit</div>
-<button class="tab" role="tab" data-a="tab" data-v="plan" aria-selected="true">Plan</button>
+<button class="tab" role="tab" data-a="tab" data-v="home" aria-selected="true">Home</button>
+<button class="tab" role="tab" data-a="tab" data-v="plan" aria-selected="false">To-do</button>
+<button class="tab" role="tab" data-a="tab" data-v="homework" aria-selected="false">Homework</button>
 <button class="tab" role="tab" data-a="tab" data-v="track" aria-selected="false">Track</button>
 <button class="tab" role="tab" data-a="tab" data-v="study" aria-selected="false">Study</button>
 <button class="tab" role="tab" data-a="tab" data-v="focus" aria-selected="false">Focus</button>
@@ -182,8 +209,52 @@ main{padding-bottom:120px}
 </nav>
 <main>
 
-<div id="install-tools" class="card" style="margin-bottom:18px">
-  <div class="hr"><b>📲 Orbit on your home screen</b><span class="chip">Lenovo tablet</span></div>
+<section id="home" class="home-page">
+  <div class="hero home-welcome">
+    <div>
+      <p class="chip">YOUR SPACE</p>
+      <h1>Welcome home 👋</h1>
+      <p id="home-welcome-sub">One step at a time. You’ve got this.</p>
+    </div>
+  </div>
+
+  <section class="home-section" aria-labelledby="home-today-title">
+    <div class="home-section-heading"><h2 id="home-today-title">☀️ Your day</h2><span class="chip" id="home-day-label">Today</span></div>
+    <div id="home-day-note" class="home-day-note">
+      Pick one small thing to work on, then take a break.
+    </div>
+  </section>
+
+  <section class="home-section" aria-labelledby="home-shortcuts-title">
+    <div class="home-section-heading"><h2 id="home-shortcuts-title">🚀 Quick shortcuts</h2><span class="mute">Jump straight in</span></div>
+    <div class="home-shortcuts">
+      <button class="home-shortcut" type="button" id="home-open-todo"><span class="home-shortcut-icon">📝</span><span><b>To-do list</b><small><strong id="home-open-count">0 tasks</strong> left</small></span><span class="home-arrow">›</span></button>
+      <button class="home-shortcut" type="button" id="home-open-study"><span class="home-shortcut-icon">📚</span><span><b>Homework</b><small><strong id="home-homework-count">0 left</strong> to finish</small></span><span class="home-arrow">›</span></button>
+      <button class="home-shortcut" type="button" id="home-start-timer"><span class="home-shortcut-icon">⏱️</span><span><b>Focus timer</b><small>Start a 25-minute session</small></span><span class="home-arrow">›</span></button>
+      <button class="home-shortcut" type="button" id="home-open-cards"><span class="home-shortcut-icon">🃏</span><span><b>Flashcards</b><small>Remember key facts</small></span><span class="home-arrow">›</span></button>
+      <button class="home-shortcut" type="button" id="home-open-axo"><span class="home-shortcut-icon">🪼</span><span><b>Ask Axo</b><small>Get help planning a task</small></span><span class="home-arrow">›</span></button>
+    </div>
+  </section>
+
+  <section class="home-section" aria-labelledby="home-add-title">
+    <div class="home-section-heading"><h2 id="home-add-title">➕ Add a task</h2><span class="mute">Quick add</span></div>
+    <p class="mute home-section-desc">Write down one thing you need to do. You can organize it later in To-do.</p>
+    <div class="row2 home-quick-add"><input id="home-quick-task" placeholder="e.g. Finish maths questions" aria-label="Quick add task"><button class="btn" id="home-add-task" type="button">Add task</button></div>
+  </section>
+
+  <section class="home-section" aria-labelledby="home-tip-title">
+    <div class="home-section-heading"><h2 id="home-tip-title">💡 Study tip</h2><button class="btn ghost" id="home-new-tip" type="button">Another tip</button></div>
+    <div class="home-tip-card"><span aria-hidden="true">✨</span><p id="home-tip">Test yourself without looking at your notes. It helps you find what you really remember.</p></div>
+  </section>
+
+  <section class="home-section home-rest-section" aria-labelledby="home-rest-title">
+    <div class="home-section-heading"><h2 id="home-rest-title">🌿 Remember to rest</h2></div>
+    <p class="mute">You don’t have to do everything at once. Small steps on school days are enough.</p>
+  </section>
+</section>
+<div id="plan-extras" hidden>
+<div id="install-tools" class="card" style="margin-bottom:12px">
+  <div class="hr"><b>📲 Orbit on your home screen</b><span class="chip">Lenovo tablet</span><button id="dismiss-install-tools" type="button" aria-label="Close home screen tips" title="Close" style="margin-left:4px;flex:none;width:34px;height:34px;border:1px solid var(--line);border-radius:50%;background:var(--bg);font-size:22px;line-height:1">×</button></div>
   <p style="margin:8px 0;color:var(--mute)">Install Orbit like an app, and turn on reminders while it is open.</p>
   <div class="row" style="justify-content:flex-start">
     <button class="btn" id="install-app" type="button" hidden>Install app</button>
@@ -201,7 +272,36 @@ main{padding-bottom:120px}
 </div>
 
 
-<section id="plan">
+<section id="harsh-motivation" class="card" style="margin:16px 0">
+  <div class="hr"><b>🔥 No-Excuses Motivation</b><span class="chip">Get to work</span></div>
+  <p style="margin:6px 0;color:var(--mute)">Direct, tough reminders to stop procrastinating and start studying. No insults, just accountability.</p>
+  <div id="motivation-message" aria-live="polite" style="font-size:18px;font-weight:700;line-height:1.5;margin:14px 0">
+    You said your goals matter. Prove it with the next 20 minutes. Open the work, put your phone away, and start.
+  </div>
+  <div class="row" style="justify-content:flex-start;gap:8px;flex-wrap:wrap">
+    <button class="btn" id="new-motivation" type="button">Give me a reality check</button>
+    <button class="btn ghost" id="start-study-sprint" type="button">Start 20-minute sprint</button>
+  </div>
+  <p id="study-sprint-status" aria-live="polite" style="color:var(--mute);margin:8px 0 0"></p>
+</section>
+
+
+<section id="day-checkin" class="card" style="margin:16px 0">
+  <div class="hr"><b>🌤️ How's your day been?</b><span class="chip" id="checkin-date"></span></div>
+  <p style="margin:6px 0;color:var(--mute)">Check in with yourself. There are no right or wrong answers.</p>
+  <div id="checkin-fields" style="display:grid;gap:14px;margin-top:12px">
+    <div class="checkin-question" data-key="mood"><b>How have you felt today?</b><div class="row" style="gap:8px;flex-wrap:wrap;margin-top:8px"><button class="btn ghost mood-choice" data-value="1" type="button">☹️ Sad</button><button class="btn ghost mood-choice" data-value="2" type="button">😐 Okay</button><button class="btn ghost mood-choice" data-value="3" type="button">😊 Happy</button></div></div>
+    <div class="checkin-question" data-key="study"><b>How did studying go?</b><div class="row" style="gap:8px;flex-wrap:wrap;margin-top:8px"><button class="btn ghost mood-choice" data-value="1" type="button">☹️ Not well</button><button class="btn ghost mood-choice" data-value="2" type="button">😐 A bit</button><button class="btn ghost mood-choice" data-value="3" type="button">😊 Well</button></div></div>
+    <div class="checkin-question" data-key="school"><b>How did school go?</b><div class="row" style="gap:8px;flex-wrap:wrap;margin-top:8px"><button class="btn ghost mood-choice" data-value="1" type="button">☹️ Rough</button><button class="btn ghost mood-choice" data-value="2" type="button">😐 Okay</button><button class="btn ghost mood-choice" data-value="3" type="button">😊 Good</button></div></div>
+    <div class="checkin-question" data-key="energy"><b>How was your energy?</b><div class="row" style="gap:8px;flex-wrap:wrap;margin-top:8px"><button class="btn ghost mood-choice" data-value="1" type="button">🥱 Low</button><button class="btn ghost mood-choice" data-value="2" type="button">😐 Medium</button><button class="btn ghost mood-choice" data-value="3" type="button">⚡ High</button></div></div>
+  </div>
+  <label for="checkin-note" style="display:block;margin-top:14px">Anything you want to remember about today?</label><textarea id="checkin-note" rows="2" placeholder="Optional note..." style="width:100%;margin-top:6px"></textarea>
+  <button class="btn" id="save-checkin" type="button" style="margin-top:10px">Save today's check-in</button><p id="checkin-status" aria-live="polite" style="color:var(--mute);margin:8px 0 0"></p>
+  <div style="margin-top:16px"><div class="hr"><b>🗓️ Your check-in calendar</b></div><div class="row" style="justify-content:flex-start;gap:8px;margin:8px 0"><button class="btn ghost" id="checkin-prev" type="button">← Previous</button><b id="checkin-month-label"></b><button class="btn ghost" id="checkin-next" type="button">Next →</button></div><div id="checkin-calendar" style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px"></div><p style="font-size:13px;color:var(--mute)">Calendar emojis show your saved mood. Tap a day to view its check-in.</p><div id="checkin-detail" aria-live="polite" style="padding:10px;border-radius:10px;background:var(--bg2,rgba(127,127,127,.08))">Save a check-in to start your calendar.</div></div>
+</section>
+
+</div><!-- end plan-only dashboard sections -->
+<section id="plan" hidden>
 <div class="hero">
 <div style="display:flex;align-items:center;gap:16px;min-width:0"><label class="avatar" title="Change your picture"><input type="file" class="picin" accept="image/*" hidden aria-label="Choose profile picture"><span class="avimg"></span></label><div><h1 id="greet">Hello</h1><p id="sub"></p></div></div>
 <div class="ringbox"><svg viewBox="0 0 128 128"><circle class="bg" cx="64" cy="64" r="54"/><circle class="fg" id="ring" cx="64" cy="64" r="54" stroke-dasharray="339.3" stroke-dashoffset="339.3"/></svg><b id="pct">0%</b></div>
@@ -221,17 +321,8 @@ main{padding-bottom:120px}
 <ul class="tasks" id="list"></ul>
 </section>
 
-<section id="track" hidden>
-<div class="hero"><div><h1>Track</h1><p>Small habits and bigger goals, one check at a time.</p></div></div>
-<h2>Habits</h2>
-<div id="habits"></div>
-<div class="row2"><input data-ent="1" id="hin" placeholder="New habit, like “Read 20 pages”" aria-label="New habit"><button class="btn" data-a="hadd">Add habit</button></div>
-<h2>Goals</h2>
-<div id="goals"></div>
-<div class="row2"><input data-ent="1" id="gin" placeholder="New goal, like “Finish my project”" aria-label="New goal"><button class="btn" data-a="gnew">Add goal</button></div>
-</section>
-
-<section id="study" hidden>
+<section id="homework" hidden>
+<div class="hero"><div><h1>Homework</h1><p id="stsub">Keep assignments separate from your everyday to-do list.</p></div></div>
 <div class="hero"><div><h1>Study</h1><p id="stsub"></p></div></div>
 <div class="add">
 <input type="text" id="hwt" placeholder="Homework, like “Maths worksheet 4”" aria-label="Homework title">
@@ -246,6 +337,41 @@ main{padding-bottom:120px}
 <button class="chip" data-a="stq" data-q="I keep procrastinating on homework. Give me a few tricks that actually work.">Stop procrastinating</button>
 </div>
 <div id="hw"></div>
+<section id="orbit-dashboard-extras" class="card" style="margin:16px 0">
+<div class="hr"><b>📚 All my homework</b><span class="chip" id="homework-count">0 unfinished</span></div>
+  <p style="margin:6px 0;color:var(--mute)">See all your homework, including work due next week, next month or next year.</p>
+  <div class="row" style="justify-content:flex-start;gap:8px;flex-wrap:wrap;margin:8px 0">
+    <button class="btn ghost homework-filter" data-filter="all" type="button">All</button>
+    <button class="btn ghost homework-filter" data-filter="today" type="button">Today</button>
+    <button class="btn ghost homework-filter" data-filter="week" type="button">Next 7 days</button>
+    <button class="btn ghost homework-filter" data-filter="month" type="button">Next 30 days</button>
+    <button class="btn ghost homework-filter" data-filter="year" type="button">Next year</button>
+    <button class="btn ghost homework-filter" data-filter="overdue" type="button">Overdue</button>
+  </div>
+  <div id="all-homework-list" style="display:grid;gap:8px"><p style="color:var(--mute)">Your homework will appear here when you add it in Orbit.</p></div>
+</section>
+</section>
+
+<section id="track" hidden>
+<div class="hero"><div><h1>Track</h1><p>Small habits and bigger goals, one check at a time.</p></div></div>
+<h2>Habits</h2>
+<div id="habits"></div>
+<div class="row2"><input data-ent="1" id="hin" placeholder="New habit, like “Read 20 pages”" aria-label="New habit"><button class="btn" data-a="hadd">Add habit</button></div>
+<h2>Goals</h2>
+<div id="goals"></div>
+<div class="row2"><input data-ent="1" id="gin" placeholder="New goal, like “Finish my project”" aria-label="New goal"><button class="btn" data-a="gnew">Add goal</button></div>
+</section>
+
+<section id="study" hidden>
+<div class="card" id="flashcards-panel" style="margin-top:16px">
+  <div class="hr"><b>🃏 Flashcards</b><span class="chip" id="flashcard-count">0 cards</span></div>
+  <p class="mute" style="margin:6px 0 10px">Add a question and answer. Tap a card to reveal the answer.</p>
+  <div class="row2"><input id="flashcard-front" placeholder="Question / key term" aria-label="Flashcard question"><input id="flashcard-back" placeholder="Answer / definition" aria-label="Flashcard answer"><button class="btn" id="flashcard-add" type="button">Add card</button></div>
+  <div class="row" style="justify-content:flex-start;margin:10px 0;gap:8px"><button class="btn ghost" id="flashcard-prev" type="button">← Previous</button><button class="btn ghost" id="flashcard-next" type="button">Next →</button><button class="btn ghost" id="flashcard-delete" type="button">Delete card</button></div>
+  <button id="flashcard-face" type="button" class="card" style="width:100%;min-height:100px;text-align:center;display:grid;place-items:center;font-size:18px;font-weight:700;cursor:pointer">No cards yet — add your first one above.</button>
+  <p class="mute" id="flashcard-position" style="text-align:center;margin:6px 0 0">Your cards are saved on this device.</p>
+</div>
+<div class="card" style="margin-top:12px"><b>💡 Easy study method</b><p style="margin:8px 0 0">Study a small chunk, close your notes, say or write what you remember, then check what you missed. Repeat tomorrow.</p></div>
 </section>
 <section id="focus" hidden>
 <div class="hero"><div><h1>Focus</h1><p>Pick a task, start the clock, and stay with it.</p></div></div>
@@ -425,7 +551,7 @@ function makeLocalTasks(v){
 function showPrev(){
  $('#aiprev').innerHTML=pending.length?'<ul class="tasks" style="margin-top:12px">'+pending.map(function(t){return '<li class="task p-'+t.p+'"><span>'+esc(t.t)+'</span>'+(t.est?'<em class="chip">'+t.est+'m</em>':'')+'</li>'}).join('')+'</ul><div class="row2"><button class="btn" data-a="aiadd">Add '+pending.length+' tasks to '+(sel===TK?'today':new Date(sel+'T12:00:00').toLocaleDateString(undefined,{weekday:'long'}))+'</button></div>':'';
 }
-function show(v){document.querySelectorAll('.tab').forEach(function(b){b.setAttribute('aria-selected',b.dataset.v===v)});['plan','track','study','focus','coach','review'].forEach(function(s){$('#'+s).hidden=s!==v});if(v==='review')renderReview()}
+function show(v){document.querySelectorAll('.tab').forEach(function(b){b.setAttribute('aria-selected',b.dataset.v===v)});['home','plan','homework','track','study','focus','coach','review'].forEach(function(s){var el=$('#'+s);if(el)el.hidden=s!==v});var extras=$('#plan-extras');if(extras)extras.hidden=v!=='plan';if(v==='review')renderReview();var target=$('#'+v);if(target&&v!=='plan')target.scrollIntoView({behavior:'smooth',block:'start'});else if(v==='plan')window.scrollTo({top:0,behavior:'smooth'})}
 function addTask(t,p,est,d){S.tasks.push({id:Date.now()+Math.floor(Math.random()*1000),t:t,done:false,p:p,est:est||0,d:d||sel})}
 
 var A={
@@ -641,5 +767,121 @@ ai='ok';renderChat();
 })();
 
 </script>
+
+<script>
+(function(){
+  const tip=document.getElementById('install-tools'), dismiss=document.getElementById('dismiss-install-tools');
+  try { if(localStorage.getItem('orbit-install-tip-dismissed')==='1' && tip) tip.style.display='none'; } catch(e){}
+  if(dismiss) dismiss.addEventListener('click',function(){if(tip)tip.style.display='none';try{localStorage.setItem('orbit-install-tip-dismissed','1')}catch(e){}});
+  function key(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+  function appState(){try{return JSON.parse(localStorage.getItem('orbit')||'{}')}catch(e){return {}}}
+  function homework(){let s=appState(),a=[];(s.hw||[]).forEach(h=>a.push({id:'h'+h.id,title:h.title||h.t||'Homework',due:h.due||h.d||'',done:!!h.done,kind:'Homework'}));(s.tasks||[]).forEach(t=>a.push({id:'t'+t.id,title:t.t||t.title||'Task',due:t.d||t.due||'',done:!!t.done,kind:'Task'}));let seen=new Set();return a.filter(x=>{let k=x.title+'|'+x.due+'|'+x.done;if(seen.has(k))return false;seen.add(k);return true}).sort((a,b)=>(a.due||'9999').localeCompare(b.due||'9999'))}
+  let filter='all';function drawHomework(){let list=document.getElementById('all-homework-list');if(!list)return;let all=homework(),today=key(new Date()),w=new Date();w.setDate(w.getDate()+7);let m=new Date();m.setDate(m.getDate()+30);let y=new Date();y.setFullYear(y.getFullYear()+1);let count=document.getElementById('homework-count');if(count)count.textContent=all.filter(x=>!x.done).length+' unfinished';let items=all.filter(x=>{if(filter==='all')return true;if(filter==='overdue')return !x.done&&x.due&&x.due<today;if(filter==='today')return x.due===today;if(!x.due)return false;let d=new Date(x.due+'T23:59:59');if(filter==='week')return x.due>=today&&d<=w;if(filter==='month')return x.due>=today&&d<=m;if(filter==='year')return x.due>=today&&d<=y;return true});list.innerHTML='';if(!items.length){let p=document.createElement('p');p.style.color='var(--mute)';p.textContent=filter==='all'?'No homework found. Add homework in Orbit and it will appear here.':'No homework in this time range.';list.appendChild(p);return}items.forEach(x=>{let c=document.createElement('div');c.style.cssText='display:flex;gap:10px;align-items:center;padding:10px;border:1px solid var(--line,rgba(127,127,127,.2));border-radius:10px';let i=document.createElement('div');i.style.flex='1';let t=document.createElement('div');t.style.fontWeight='600';t.textContent=(x.done?'✅ ':'📘 ')+x.title;let meta=document.createElement('div');meta.style.cssText='font-size:13px;color:var(--mute);margin-top:3px';meta.textContent=x.due?x.kind+' · Due '+x.due+(x.due<today&&!x.done?' · OVERDUE':''):x.kind+' · No due date';i.append(t,meta);c.appendChild(i);list.appendChild(c)})}
+  document.querySelectorAll('.homework-filter').forEach(b=>b.addEventListener('click',()=>{filter=b.dataset.filter;drawHomework()}));drawHomework();window.addEventListener('storage',drawHomework);setInterval(drawHomework,15000);
+  const dateEl=document.getElementById('checkin-date'),note=document.getElementById('checkin-note'),status=document.getElementById('checkin-status'),save=document.getElementById('save-checkin'),calendar=document.getElementById('checkin-calendar'),monthLabel=document.getElementById('checkin-month-label'),detail=document.getElementById('checkin-detail');let ratings={},view=new Date(new Date().getFullYear(),new Date().getMonth(),1),selected=key(new Date());
+  function records(){try{return JSON.parse(localStorage.getItem('orbit-day-checkins')||'{}')}catch(e){return {}}}function emoji(v,k){return k==='energy'?(v==1?'🥱':v==2?'😐':'⚡'):(v==1?'☹️':v==2?'😐':'😊')}
+  function loadDay(){let r=records()[selected];if(detail)detail.textContent=r?selected+' — Mood '+emoji(r.mood,'mood')+', study '+emoji(r.study,'study')+', school '+emoji(r.school,'school')+', energy '+emoji(r.energy,'energy')+(r.note?' · '+r.note:''):selected+': no check-in saved.';if(selected===key(new Date())){ratings={};if(r)Object.assign(ratings,r);document.querySelectorAll('.checkin-question').forEach(q=>q.querySelectorAll('.mood-choice').forEach(b=>b.style.outline=String(b.dataset.value)===String(ratings[q.dataset.key])?'2px solid var(--accent,#5b5cff)':'none'));if(note)note.value=r&&r.note||''}}
+  function drawCalendar(){if(!calendar)return;calendar.innerHTML='';let rs=records();monthLabel.textContent=view.toLocaleDateString(undefined,{month:'long',year:'numeric'});['M','T','W','T','F','S','S'].forEach(d=>{let e=document.createElement('div');e.textContent=d;e.style.cssText='text-align:center;font-size:12px;color:var(--mute);padding:4px 0';calendar.appendChild(e)});let first=new Date(view.getFullYear(),view.getMonth(),1),offset=(first.getDay()+6)%7;for(let i=0;i<offset;i++)calendar.appendChild(document.createElement('div'));let days=new Date(view.getFullYear(),view.getMonth()+1,0).getDate();for(let n=1;n<=days;n++){let d=new Date(view.getFullYear(),view.getMonth(),n),k=key(d),r=rs[k],b=document.createElement('button');b.type='button';b.style.cssText='min-width:0;padding:6px 1px;border-radius:8px;border:1px solid var(--line,rgba(127,127,127,.2));background:'+(k===selected?'var(--accent,#5b5cff)':'transparent')+';color:'+(k===selected?'white':'inherit')+';font-size:12px;white-space:pre-line';b.textContent=n+(r?'\n'+emoji(r.mood,'mood'):'');b.addEventListener('click',()=>{selected=k;loadDay();drawCalendar()});calendar.appendChild(b)}loadDay()}
+  document.querySelectorAll('.checkin-question').forEach(q=>q.querySelectorAll('.mood-choice').forEach(b=>b.addEventListener('click',()=>{ratings[q.dataset.key]=Number(b.dataset.value);q.querySelectorAll('.mood-choice').forEach(x=>x.style.outline=x===b?'2px solid var(--accent,#5b5cff)':'none')})));
+  if(save)save.addEventListener('click',()=>{if(!ratings.mood||!ratings.study||!ratings.school||!ratings.energy){status.textContent='Choose a rating for each section first.';return}let rs=records();rs[key(new Date())]={mood:ratings.mood,study:ratings.study,school:ratings.school,energy:ratings.energy,note:note?note.value.trim():''};try{localStorage.setItem('orbit-day-checkins',JSON.stringify(rs));selected=key(new Date());status.textContent='Saved! Your check-in is in your calendar.';drawCalendar()}catch(e){status.textContent='Could not save this check-in on this device.'}});
+  document.getElementById('checkin-prev').addEventListener('click',()=>{view=new Date(view.getFullYear(),view.getMonth()-1,1);drawCalendar()});document.getElementById('checkin-next').addEventListener('click',()=>{view=new Date(view.getFullYear(),view.getMonth()+1,1);drawCalendar()});if(dateEl)dateEl.textContent=new Date().toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'});drawCalendar();
+})();
+</script>
+
+
+<script>
+
+// Tough-but-constructive study motivation and a short focus sprint.
+(function(){
+  const messages = [
+    "Stop waiting to feel motivated. Motivation often comes after you start. Open the first question and do it now.",
+    "Your future grades are built in ordinary sessions like this one. Do 20 focused minutes before you negotiate with yourself.",
+    "You can keep scrolling, but the homework will still be there. Close the distractions and finish one task.",
+    "Be honest: are you resting because you need rest, or avoiding the work because it feels hard? If you're okay to continue, start with one small question.",
+    "Nobody can do your revision for you. Ask for help when you're stuck, but you still have to show up and practise.",
+    "You don't need a perfect study session. You need a real one. Phone away, timer on, first question now.",
+    "Every minute you spend practising is a chance to improve. Make this next 20 minutes count.",
+    "Don't turn one difficult topic into an excuse to quit. Break it down, learn one part, then move on.",
+    "Your goal won't happen by wishing. Pick the subject, open the page, and earn today's progress.",
+    "Less planning, more doing. Choose one task and work on it until the timer ends."
+  ];
+  const message = document.getElementById('motivation-message');
+  const newButton = document.getElementById('new-motivation');
+  const sprintButton = document.getElementById('start-study-sprint');
+  const sprintStatus = document.getElementById('study-sprint-status');
+  if(newButton && message){
+    newButton.addEventListener('click', function(){
+      let next = Math.floor(Math.random()*messages.length);
+      message.textContent = messages[next];
+    });
+  }
+  let sprintEnd = 0, sprintTimer = null;
+  if(sprintButton && sprintStatus){
+    sprintButton.addEventListener('click', function(){
+      if(sprintTimer){ clearInterval(sprintTimer); sprintTimer=null; }
+      sprintEnd = Date.now()+20*60*1000;
+      sprintButton.textContent = 'Restart 20-minute sprint';
+      function tick(){
+        const remaining = Math.max(0, Math.ceil((sprintEnd-Date.now())/1000));
+        if(remaining<=0){
+          clearInterval(sprintTimer); sprintTimer=null;
+          sprintStatus.textContent = 'Sprint finished. Take a short break, then choose your next task.';
+          sprintButton.textContent = 'Start another sprint';
+          return;
+        }
+        const min = Math.floor(remaining/60), sec = remaining%60;
+        sprintStatus.textContent = 'Focus sprint running: '+min+':'+String(sec).padStart(2,'0')+' left. One task at a time.';
+      }
+      tick(); sprintTimer=setInterval(tick,1000);
+    });
+  }
+})();
+
+</script>
+<script>
+// Reliable navigation for Home / To-do / Track / Study / Focus / Axo / Review tabs.
+(function(){
+  document.querySelectorAll('nav button.tab[data-v]').forEach(function(button){
+    button.addEventListener('click', function(){
+      var value=button.getAttribute('data-v');
+      document.querySelectorAll('nav button.tab[data-v]').forEach(function(other){other.setAttribute('aria-selected',other===button?'true':'false')});
+      ['home','plan','homework','track','study','focus','coach','review'].forEach(function(id){var panel=document.getElementById(id);if(panel)panel.hidden=id!==value});
+      var extras=document.getElementById('plan-extras');if(extras)extras.hidden=value!=='plan';
+      if(value==='review' && typeof renderReview==='function')renderReview();
+      window.scrollTo({top:0,behavior:'smooth'});
+    });
+  });
+})();
+</script>
+
+<script>
+(function(){
+ const $=s=>document.querySelector(s);
+ function state(){try{return JSON.parse(localStorage.getItem('orbit')||'{}')}catch(e){return {}}}
+ function go(tab){const b=document.querySelector('nav button.tab[data-v="'+tab+'"]');if(b)b.click();}
+ function updateHome(){const s=state(),tasks=s.tasks||[],hw=s.hw||[];const open=tasks.filter(t=>!t.done).length;const homework=hw.filter(h=>!h.done).length;const a=$('#home-open-count'),b=$('#home-homework-count');if(a)a.textContent=open+' task'+(open===1?'':'s');if(b)b.textContent=homework+' left';const now=new Date(),label=$('#home-day-label'),note=$('#home-day-note');if(label)label.textContent=now.toLocaleDateString(undefined,{weekday:'long',month:'short',day:'numeric'});if(note){if(now.getDay()===6){note.textContent='Saturday is your day off school 🎉 No schoolwork is planned here. Rest, enjoy your hobbies, or do optional catch-up only if you want to.';}else if(now.getDay()===0){note.textContent='Sunday is your day off too 🎉 No schoolwork is planned here. Rest, enjoy your hobbies, and get ready for the week only if you feel like it.';}else{note.textContent='Choose one important task first. You can add it below, then use the timer to focus.';}}}
+ $('#home-open-todo')?.addEventListener('click',()=>go('plan'));
+ $('#home-open-study')?.addEventListener('click',()=>go('homework'));
+ $('#home-open-cards')?.addEventListener('click',()=>{go('study');setTimeout(()=>$('#flashcard-front')?.focus(),120)});
+ $('#home-open-axo')?.addEventListener('click',()=>go('coach'));
+ $('#home-start-timer')?.addEventListener('click',()=>{go('focus');setTimeout(()=>{const d=$('#dur');if(d)d.value='25';const goBtn=$('#go');if(goBtn&&goBtn.textContent.trim().toLowerCase()==='start')goBtn.click()},120)});
+ $('#home-add-task')?.addEventListener('click',()=>{const input=$('#home-quick-task'),v=input?.value.trim();if(!v)return;go('plan');setTimeout(()=>{const main=$('#in'),add=$('[data-a="tadd"]');if(main&&add){main.value=v;add.click();input.value='';updateHome()}},100)});
+ $('#home-quick-task')?.addEventListener('keydown',e=>{if(e.key==='Enter')$('#home-add-task')?.click()});
+ const tips=['Test yourself without looking at your notes. It helps you find what you really remember.','Try 20–25 minutes of focus, then take a five-minute break.','Explain a tricky idea out loud as if you are teaching someone younger.','Do a few practice questions, then mark them and fix your mistakes.','Review a topic again tomorrow instead of cramming everything in one go.','Put your phone away and choose one small task to start with.'];let tipIndex=0;
+ $('#home-new-tip')?.addEventListener('click',()=>{tipIndex=(tipIndex+1)%tips.length;$('#home-tip').textContent=tips[tipIndex]});
+ updateHome();setInterval(updateHome,2500);window.addEventListener('storage',updateHome);
+ // Flashcards are saved locally and work without an account or API.
+ let cards=[];try{cards=JSON.parse(localStorage.getItem('orbit-flashcards')||'[]')}catch(e){}let index=0,revealed=false;
+ function saveCards(){try{localStorage.setItem('orbit-flashcards',JSON.stringify(cards))}catch(e){}}
+ function drawCard(){const face=$('#flashcard-face'),count=$('#flashcard-count'),pos=$('#flashcard-position');if(!face)return;if(count)count.textContent=cards.length+' card'+(cards.length===1?'':'s');if(!cards.length){face.textContent='No cards yet — add your first one above.';if(pos)pos.textContent='Your cards are saved on this device.';return}if(index>=cards.length)index=0;if(index<0)index=cards.length-1;face.textContent=revealed?cards[index].back:cards[index].front;if(pos)pos.textContent='Card '+(index+1)+' of '+cards.length+' · Tap the card to '+(revealed?'see the question':'reveal the answer');}
+ $('#flashcard-add')?.addEventListener('click',()=>{const front=$('#flashcard-front')?.value.trim(),back=$('#flashcard-back')?.value.trim();if(!front||!back){alert('Add both a question and an answer first.');return}cards.push({front,back});index=cards.length-1;revealed=false;$('#flashcard-front').value='';$('#flashcard-back').value='';saveCards();drawCard()});
+ $('#flashcard-face')?.addEventListener('click',()=>{if(!cards.length)return;revealed=!revealed;drawCard()});
+ $('#flashcard-prev')?.addEventListener('click',()=>{if(!cards.length)return;index=(index-1+cards.length)%cards.length;revealed=false;drawCard()});
+ $('#flashcard-next')?.addEventListener('click',()=>{if(!cards.length)return;index=(index+1)%cards.length;revealed=false;drawCard()});
+ $('#flashcard-delete')?.addEventListener('click',()=>{if(!cards.length)return;if(!confirm('Delete this flashcard?'))return;cards.splice(index,1);if(index>=cards.length)index=Math.max(0,cards.length-1);revealed=false;saveCards();drawCard()});
+ drawCard();
+})();
+</script>
+
 </body>
 </html>
